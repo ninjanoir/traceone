@@ -9,8 +9,8 @@ import { handleDirection } from "../utils";
 
 export default function Home() {
   const roverRef = useRef(null);
-  const [canvasW] = useState(400);
-  const [canvasH] = useState(400);
+  const [canvasW] = useState(500);
+  const [canvasH] = useState(500);
   const [orientation, setOrientation] = useState("N");
   const [rotation, setRotation] = useState(0);
 
@@ -31,18 +31,16 @@ export default function Home() {
         const l = "left";
 
         result = handleDirection(orientation, l);
-        console.log('----left',result)
-
 
         if (result.rotate) {
           image.y(image.y() + image.height() / 2);
           image.x(image.x() + image.width() / 2);
           setOrientation(result.state);
           setRotation(result.value);
-
         } else {
           setOrientation("W");
-          setRoverPos({ ...roverPos, roverX: image.x() - unit });
+          image.x() >= 75 &&
+            setRoverPos({ ...roverPos, roverX: image.x() - unit });
         }
 
         break;
@@ -51,18 +49,17 @@ export default function Home() {
         const f = "forward";
 
         result = handleDirection(orientation, f);
-        console.log('----forward',result)
-        
 
         if (result.rotate) {
           image.y(image.y() + image.height() / 2);
           image.x(image.x() + image.width() / 2);
           setOrientation(result.state);
           setRotation(result.value);
-
         } else {
           setOrientation("N");
-          setRoverPos({ ...roverPos, roverY: image.y() - unit });
+
+          image.y() >= 75 &&
+            setRoverPos({ ...roverPos, roverY: image.y() - unit });
         }
 
         break;
@@ -72,9 +69,6 @@ export default function Home() {
 
         result = handleDirection(orientation, r);
 
-        console.log('----right',result)
-
-
         if (result.rotate) {
           image.y(image.y() + image.height() / 2);
           image.x(image.x() + image.width() / 2);
@@ -82,7 +76,8 @@ export default function Home() {
           setRotation(result.value);
         } else {
           setOrientation("E");
-          setRoverPos({ ...roverPos, roverX: image.x() + unit });
+
+          image.x() <= 400 && setRoverPos({ ...roverPos, roverX: image.x() + unit });
         }
 
         break;
@@ -92,7 +87,8 @@ export default function Home() {
 
         result = handleDirection(orientation, d);
 
-        console.log('----down',result)
+        console.log('---down----',result)
+
 
         if (result.rotate) {
           image.y(image.y() + image.height() / 2);
@@ -101,7 +97,9 @@ export default function Home() {
           setRotation(result.value);
         } else {
           setOrientation("S");
-          setRoverPos({ ...roverPos, roverY: image.y() + unit });
+
+          image.y() <= 315 &&
+            setRoverPos({ ...roverPos, roverY: image.y() + unit });
         }
         break;
 
@@ -111,7 +109,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log(rotation)
     window.addEventListener("keydown", handleMoove);
 
     return () => {

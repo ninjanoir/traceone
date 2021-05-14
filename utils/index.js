@@ -48,7 +48,7 @@ export const handleDirection = (orientation, direction) => {
         } else if (direction === "forward") {
           return { rotate: true, value: 0, state: "N" };
         } else if (direction === "down") {
-          return { rotate: true, value: -90, state: "S" };
+          return { rotate: true, value: 180, state: "S" };
         }
         break;
 
