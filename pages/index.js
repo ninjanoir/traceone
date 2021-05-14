@@ -5,87 +5,119 @@ import { Stage, Layer } from "react-konva";
 import { useState, useEffect, useRef } from "react";
 
 import Rover from "../ui/Rover";
-import {handleDirection} from '../utils'
+import { handleDirection } from "../utils";
 
 export default function Home() {
   const roverRef = useRef(null);
   const [canvasW] = useState(400);
   const [canvasH] = useState(400);
   const [orientation, setOrientation] = useState("N");
-  const [rotation, setRotation] = useState(0)
+  const [rotation, setRotation] = useState(0);
 
-  const [unit] = useState(100);
+  const [unit] = useState(40);
 
-  const [roverPos, setRoverPos] = useState({ roverX: 0 + unit, roverY: 0 + unit });
+  const [roverPos, setRoverPos] = useState({ roverX: 0, roverY: 0 });
 
   const handleMoove = (e) => {
-
     let result = {};
-    const fuse = roverRef.current.attrs.image;
 
-    // const { x, y } = roverRef.current.attrs;
+    const image = roverRef.current;
+    image.offsetX(image.width() / 2);
+    image.offsetY(image.height() / 2);
 
     switch (e.keyCode) {
       case 37:
         // left
-        const l = 'left';
+        const l = "left";
 
-       result = handleDirection(orientation, l)
+        result = handleDirection(orientation, l);
+        console.log('----left',result)
 
-       if(result.rotate){
 
-         setOrientation(result.state)
-         setRotation(result.value)
-       setRoverPos({...roverPos, roverX: roverPos.roverX - unit})
+        if (result.rotate) {
+          image.y(image.y() + image.height() / 2);
+          image.x(image.x() + image.width() / 2);
+          setOrientation(result.state);
+          setRotation(result.value);
 
-       }
+        } else {
+          setOrientation("W");
+          setRoverPos({ ...roverPos, roverX: image.x() - unit });
+        }
 
         break;
       case 38:
         // up
-        const f = 'forward';
+        const f = "forward";
 
-       result = handleDirection(orientation, f)
+        result = handleDirection(orientation, f);
+        console.log('----forward',result)
+        
 
+        if (result.rotate) {
+          image.y(image.y() + image.height() / 2);
+          image.x(image.x() + image.width() / 2);
+          setOrientation(result.state);
+          setRotation(result.value);
 
-
+        } else {
+          setOrientation("N");
+          setRoverPos({ ...roverPos, roverY: image.y() - unit });
+        }
 
         break;
       case 39:
         // right
-        const r = 'right';
+        const r = "right";
 
-        //(node.width()/2, node.height()/2)
+        result = handleDirection(orientation, r);
+
+        console.log('----right',result)
 
 
-
-       result = handleDirection(orientation, r)
-       setOrientation(result.state)
-       setRotation(result.value)
-       setRoverPos({...roverPos, roverX: roverPos.roverX + unit})
-
+        if (result.rotate) {
+          image.y(image.y() + image.height() / 2);
+          image.x(image.x() + image.width() / 2);
+          setOrientation(result.state);
+          setRotation(result.value);
+        } else {
+          setOrientation("E");
+          setRoverPos({ ...roverPos, roverX: image.x() + unit });
+        }
 
         break;
       case 40:
         // down
-        const d = 'down'
+        const d = "down";
 
-       result = handleDirection(orientation, d)
+        result = handleDirection(orientation, d);
+
+        console.log('----down',result)
+
+        if (result.rotate) {
+          image.y(image.y() + image.height() / 2);
+          image.x(image.x() + image.width() / 2);
+          setOrientation(result.state);
+          setRotation(result.value);
+        } else {
+          setOrientation("S");
+          setRoverPos({ ...roverPos, roverY: image.y() + unit });
+        }
         break;
 
       default:
-        return
+        return;
     }
   };
 
   useEffect(() => {
-    console.log(orientation)
+    console.log(rotation)
     window.addEventListener("keydown", handleMoove);
 
     return () => {
       window.removeEventListener("keydown", handleMoove);
     };
-  }, [orientation]);
+  }, [orientation, rotation]);
 
   return (
     <div className={styles.container}>
@@ -106,7 +138,12 @@ export default function Home() {
         <div className={styles.grid}>
           <Stage className={styles.canvas} width={canvasW} height={canvasH}>
             <Layer>
-              <Rover x={roverPos.roverX} y={roverPos.roverY} ref={roverRef} rotation={rotation} />
+              <Rover
+                x={roverPos.roverX}
+                y={roverPos.roverY}
+                ref={roverRef}
+                rotation={rotation}
+              />
             </Layer>
           </Stage>
         </div>
